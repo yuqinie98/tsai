@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>tsai - Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="tsai - Analysis">
+<meta property="og:description" content="source">
+<meta property="og:site-name" content="tsai">
+<meta name="twitter:title" content="tsai - Analysis">
+<meta name="twitter:description" content="source">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">tsai</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/timeseriesAI/tsai"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Analysis</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">tsai</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials.html" class="sidebar-item-text sidebar-link">Tutorial notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Data</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.core.html" class="sidebar-item-text sidebar-link">Data Core</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.external.html" class="sidebar-item-text sidebar-link">External data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.preparation.html" class="sidebar-item-text sidebar-link">Data preparation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.validation.html" class="sidebar-item-text sidebar-link">Spliting data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.preprocessing.html" class="sidebar-item-text sidebar-link">Data preprocessing</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.unwindowed.html" class="sidebar-item-text sidebar-link">Unwindowed datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.transforms.html" class="sidebar-item-text sidebar-link">Time Series Data Augmentation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.mixed_augmentation.html" class="sidebar-item-text sidebar-link">Label-mixing transforms</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.image.html" class="sidebar-item-text sidebar-link">Imaging Time Series</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.features.html" class="sidebar-item-text sidebar-link">Featurizing Time Series</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.tabular.html" class="sidebar-item-text sidebar-link">Time Series Tabular Data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.mixed.html" class="sidebar-item-text sidebar-link">Mixed data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.metadatasets.html" class="sidebar-item-text sidebar-link">Metadataset</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Models</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.layers.html" class="sidebar-item-text sidebar-link">Layers</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.utils.html" class="sidebar-item-text sidebar-link">Model utilities</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">MLPs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.mlp.html" class="sidebar-item-text sidebar-link">MLP</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.gmlp.html" class="sidebar-item-text sidebar-link">gMLP</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">RNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn.html" class="sidebar-item-text sidebar-link">RNNs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnnplus.html" class="sidebar-item-text sidebar-link">RNNPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tssequencerplus.html" class="sidebar-item-text sidebar-link">TSSequencerPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">CNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.fcn.html" class="sidebar-item-text sidebar-link">FCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.fcnplus.html" class="sidebar-item-text sidebar-link">FCNPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.resnet.html" class="sidebar-item-text sidebar-link">ResNet</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.resnetplus.html" class="sidebar-item-text sidebar-link">ResNetPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xresnet1d.html" class="sidebar-item-text sidebar-link">XResNet1d</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xresnet1dplus.html" class="sidebar-item-text sidebar-link">XResNet1dPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rescnn.html" class="sidebar-item-text sidebar-link">ResCNN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tcn.html" class="sidebar-item-text sidebar-link">TCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.inceptiontime.html" class="sidebar-item-text sidebar-link">InceptionTime</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.inceptiontimeplus.html" class="sidebar-item-text sidebar-link">InceptionTimePlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xceptiontime.html" class="sidebar-item-text sidebar-link">XceptionTime</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xceptiontimeplus.html" class="sidebar-item-text sidebar-link">XceptionTimePlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.omniscalecnn.html" class="sidebar-item-text sidebar-link">OmniScaleCNN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xcm.html" class="sidebar-item-text sidebar-link">XCM</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xcmplus.html" class="sidebar-item-text sidebar-link">XCMPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">RNN-CNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn_fcn.html" class="sidebar-item-text sidebar-link">RNN_FCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn_fcnplus.html" class="sidebar-item-text sidebar-link">RNN_FCNPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">Wavelet-based NNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.mwdn.html" class="sidebar-item-text sidebar-link">mWDN</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">Transformers</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.positional_encoders.html" class="sidebar-item-text sidebar-link">Positional encoders</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.transformermodel.html" class="sidebar-item-text sidebar-link">TransformerModel</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tst.html" class="sidebar-item-text sidebar-link">TST</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tstplus.html" class="sidebar-item-text sidebar-link">TSTPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tsperceiver.html" class="sidebar-item-text sidebar-link">TSPerceiver</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tsitplus.html" class="sidebar-item-text sidebar-link">TSiT</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">ROCKETs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rocket.html" class="sidebar-item-text sidebar-link">ROCKET</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rocket_pytorch.html" class="sidebar-item-text sidebar-link">ROCKET Pytorch</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocket.html" class="sidebar-item-text sidebar-link">MINIROCKET</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocket_pytorch.html" class="sidebar-item-text sidebar-link">MINIROCKET Pytorch</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocketplus_pytorch.html" class="sidebar-item-text sidebar-link">MINIROCKETPlus Pytorch</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">Tabular models</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabmodel.html" class="sidebar-item-text sidebar-link">TabModel</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabtransformer.html" class="sidebar-item-text sidebar-link">TabTransformer</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.gatedtabtransformer.html" class="sidebar-item-text sidebar-link">GatedTabTransformer</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabfusiontransformer.html" class="sidebar-item-text sidebar-link">TabFusionTransformer</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">Miscellaneous</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.multiinputnet.html" class="sidebar-item-text sidebar-link">MultiInputNet</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.misc.html" class="sidebar-item-text sidebar-link">Miscellaneous</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="true">Training</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./learner.html" class="sidebar-item-text sidebar-link">Learner</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tslearner.html" class="sidebar-item-text sidebar-link">TSLearner</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./optimizer.html" class="sidebar-item-text sidebar-link">Optimizers</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./metrics.html" class="sidebar-item-text sidebar-link">Metrics</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">Callbacks</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.core.html" class="sidebar-item-text sidebar-link">Callback</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.predictiondynamics.html" class="sidebar-item-text sidebar-link">PredictionDynamics</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.noisy_student.html" class="sidebar-item-text sidebar-link">Noisy student</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.mvp.html" class="sidebar-item-text sidebar-link">MVP (aka TSBERT)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.experimental.html" class="sidebar-item-text sidebar-link">Experimental Callbacks</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./calibration.html" class="sidebar-item-text sidebar-link">Calibration</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="true">HPO &amp; experiment tracking</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./optuna.html" class="sidebar-item-text sidebar-link">Optuna</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./wandb.html" class="sidebar-item-text sidebar-link">Weights &amp; Biases Sweeps</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference.html" class="sidebar-item-text sidebar-link">Inference</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./analysis.html" class="sidebar-item-text sidebar-link active">Analysis</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.explainability.html" class="sidebar-item-text sidebar-link">Explainability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">Utilities</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#learner.show_probas" id="toc-learner.show_probas" class="nav-link active" data-scroll-target="#learner.show_probas">Learner.show_probas</a></li>
+  <li><a href="#learner.plot_confusion_matrix" id="toc-learner.plot_confusion_matrix" class="nav-link" data-scroll-target="#learner.plot_confusion_matrix">Learner.plot_confusion_matrix</a></li>
+  <li><a href="#learner.plot_top_losses" id="toc-learner.plot_top_losses" class="nav-link" data-scroll-target="#learner.plot_top_losses">Learner.plot_top_losses</a></li>
+  <li><a href="#learner.top_losses" id="toc-learner.top_losses" class="nav-link" data-scroll-target="#learner.top_losses">Learner.top_losses</a></li>
+  <li><a href="#permutation-importance" id="toc-permutation-importance" class="nav-link" data-scroll-target="#permutation-importance">Permutation importance</a>
+  <ul>
+  <li><a href="#learner.feature_importance" id="toc-learner.feature_importance" class="nav-link" data-scroll-target="#learner.feature_importance">Learner.feature_importance</a></li>
+  <li><a href="#learner.step_importance" id="toc-learner.step_importance" class="nav-link" data-scroll-target="#learner.step_importance">Learner.step_importance</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/timeseriesAI/tsai/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Analysis</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<blockquote class="blockquote">
+<p>fastai Learner extensions useful to perform prediction analysis.</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/analysis.py#L23" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="learner.show_probas" class="level3">
+<h3 class="anchored" data-anchor-id="learner.show_probas">Learner.show_probas</h3>
+<blockquote class="blockquote">
+<pre><code> Learner.show_probas (figsize=(6, 6), ds_idx=1, dl=None, one_batch=False,
+                      max_n=None, nrows:int=1, ncols:int=1, imsize:int=3,
+                      suptitle:str=None, sharex=False, sharey=False,
+                      squeeze=True, width_ratios=None, height_ratios=None,
+                      subplot_kw=None, gridspec_kw=None)</code></pre>
+</blockquote>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>figsize</td>
+<td>tuple</td>
+<td>None</td>
+<td>Width, height in inches of the returned figure</td>
+</tr>
+<tr class="even">
+<td>ds_idx</td>
+<td>int</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>dl</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>one_batch</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>max_n</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>nrows</td>
+<td>int</td>
+<td>1</td>
+<td>Number of rows in returned axes grid</td>
+</tr>
+<tr class="odd">
+<td>ncols</td>
+<td>int</td>
+<td>1</td>
+<td>Number of columns in returned axes grid</td>
+</tr>
+<tr class="even">
+<td>imsize</td>
+<td>int</td>
+<td>3</td>
+<td>Size (in inches) of images that will be displayed in the returned figure</td>
+</tr>
+<tr class="odd">
+<td>suptitle</td>
+<td>str</td>
+<td>None</td>
+<td>Title to be set to returned figure</td>
+</tr>
+<tr class="even">
+<td>sharex</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>sharey</td>
+<td>bool</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>squeeze</td>
+<td>bool</td>
+<td>True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>width_ratios</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>height_ratios</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>subplot_kw</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>gridspec_kw</td>
+<td>NoneType</td>
+<td>None</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Returns</strong></td>
+<td><strong>(plt.Figure, plt.Axes)</strong></td>
+<td></td>
+<td><strong>Returns both fig and ax as a tuple</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/analysis.py#L63" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="learner.plot_confusion_matrix" class="level3">
+<h3 class="anchored" data-anchor-id="learner.plot_confusion_matrix">Learner.plot_confusion_matrix</h3>
+<blockquote class="blockquote">
+<pre><code> Learner.plot_confusion_matrix (ds_idx=1, dl=None, thr=0.5,
+                                normalize=False, title='Confusion matrix',
+                                cmap='Blues', norm_dec=2, figsize=(5, 5),
+                                title_fontsize=12, fontsize=10,
+                                plot_txt=True, **kwargs)</code></pre>
+</blockquote>
+<p>Plot the confusion matrix, with <code>title</code> and using <code>cmap</code>.</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/analysis.py#L119" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="learner.plot_top_losses" class="level3">
+<h3 class="anchored" data-anchor-id="learner.plot_top_losses">Learner.plot_top_losses</h3>
+<blockquote class="blockquote">
+<pre><code> Learner.plot_top_losses (X, y, k:int=9, largest=True, bs:int=64,
+                          **kwargs)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td></td>
+<td></td>
+<td>array-like object representing the independent variables</td>
+</tr>
+<tr class="even">
+<td>y</td>
+<td></td>
+<td></td>
+<td>array-like object representing the target</td>
+</tr>
+<tr class="odd">
+<td>k</td>
+<td>int</td>
+<td>9</td>
+<td>Optional. #items to plot</td>
+</tr>
+<tr class="even">
+<td>largest</td>
+<td>bool</td>
+<td>True</td>
+<td>Flag to show largest or smallest losses</td>
+</tr>
+<tr class="odd">
+<td>bs</td>
+<td>int</td>
+<td>64</td>
+<td>batch size</td>
+</tr>
+<tr class="even">
+<td>kwargs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/analysis.py#L106" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="learner.top_losses" class="level3">
+<h3 class="anchored" data-anchor-id="learner.top_losses">Learner.top_losses</h3>
+<blockquote class="blockquote">
+<pre><code> Learner.top_losses (X, y, k:int=9, largest=True, bs:int=64)</code></pre>
+</blockquote>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td></td>
+<td></td>
+<td>array-like object representing the independent variables</td>
+</tr>
+<tr class="even">
+<td>y</td>
+<td></td>
+<td></td>
+<td>array-like object representing the target</td>
+</tr>
+<tr class="odd">
+<td>k</td>
+<td>int</td>
+<td>9</td>
+<td>Optional. #items to plot</td>
+</tr>
+<tr class="even">
+<td>largest</td>
+<td>bool</td>
+<td>True</td>
+<td>Flag to show largest or smallest losses</td>
+</tr>
+<tr class="odd">
+<td>bs</td>
+<td>int</td>
+<td>64</td>
+<td>batch size</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="permutation-importance" class="level2">
+<h2 class="anchored" data-anchor-id="permutation-importance">Permutation importance</h2>
+<p>We’ve also introduced 2 methods to help you better understand how important certain features or certain steps are for your model. Both methods use permutation importance.</p>
+<p>⚠️<strong>The permutation feature or step importance is defined as the decrease in a model score when a single feature or step value is randomly shuffled.</strong></p>
+<p>So if you using accuracy (higher is better), the most important features or steps will be those with a <em>lower</em> value on the chart (as randomly shuffling them reduces performance).</p>
+<p>The opposite occurs for metrics like mean squared error (lower is better). In this case, the most important features or steps will be those with a <em>higher</em> value on the chart.</p>
+<p>There are 2 issues with step importance:</p>
+<ul>
+<li>there may be many steps and the analysis could take very long</li>
+<li>steps will likely have a high autocorrelation</li>
+</ul>
+<p>For those reasons, we’ve introduced an argument (n_steps) to group steps. In this way you’ll be able to know which part of the time series is the most important.</p>
+<p>Feature importance has been adapted from https://www.kaggle.com/cdeotte/lstm-feature-importance by Chris Deotte (Kaggle GrandMaster).</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/analysis.py#L135" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="learner.feature_importance" class="level3">
+<h3 class="anchored" data-anchor-id="learner.feature_importance">Learner.feature_importance</h3>
+<blockquote class="blockquote">
+<pre><code> Learner.feature_importance (X=None, y=None,
+                             partial_n:(&lt;class'int'&gt;,&lt;class'float'&gt;)=None,
+                             method:str='permutation',
+                             feature_names:list=None, sel_classes:(&lt;class'
+                             str'&gt;,&lt;class'list'&gt;)=None,
+                             key_metric_idx:int=0, show_chart:bool=True,
+                             figsize:tuple=None, title:str=None,
+                             return_df:bool=True,
+                             save_df_path:pathlib.Path=None,
+                             random_state:int=23, verbose:bool=True)</code></pre>
+</blockquote>
+<p>Calculates feature importance as the drop in the model’s validation loss or metric when a feature value is randomly shuffled</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td>NoneType</td>
+<td>None</td>
+<td>array-like object containing the time series. If None, all data in the validation set will be used.</td>
+</tr>
+<tr class="even">
+<td>y</td>
+<td>NoneType</td>
+<td>None</td>
+<td>array-like object containing the targets. If None, all targets in the validation set will be used.</td>
+</tr>
+<tr class="odd">
+<td>partial_n</td>
+<td>(&lt;class ‘int’&gt;, &lt;class ‘float’&gt;)</td>
+<td>None</td>
+<td># (int) or % (float) of used to measure feature importance. If None, all data will be used.</td>
+</tr>
+<tr class="even">
+<td>method</td>
+<td>str</td>
+<td>permutation</td>
+<td>Method used to invalidate feature. Use ‘permutation’ for shuffling or ‘ablation’ for setting values to np.nan.</td>
+</tr>
+<tr class="odd">
+<td>feature_names</td>
+<td>list</td>
+<td>None</td>
+<td>Optional list of feature names that will be displayed if available. Otherwise var_0, var_1, etc.</td>
+</tr>
+<tr class="even">
+<td>sel_classes</td>
+<td>(&lt;class ‘str’&gt;, &lt;class ‘list’&gt;)</td>
+<td>None</td>
+<td>classes for which the analysis will be made</td>
+</tr>
+<tr class="odd">
+<td>key_metric_idx</td>
+<td>int</td>
+<td>0</td>
+<td>Optional position of the metric used. If None or no metric is available, the loss will be used.</td>
+</tr>
+<tr class="even">
+<td>show_chart</td>
+<td>bool</td>
+<td>True</td>
+<td>Flag to indicate if a chart showing permutation feature importance will be plotted.</td>
+</tr>
+<tr class="odd">
+<td>figsize</td>
+<td>tuple</td>
+<td>None</td>
+<td>Size of the chart.</td>
+</tr>
+<tr class="even">
+<td>title</td>
+<td>str</td>
+<td>None</td>
+<td>Optional string that will be used as the chart title. If None ‘Permutation Feature Importance’.</td>
+</tr>
+<tr class="odd">
+<td>return_df</td>
+<td>bool</td>
+<td>True</td>
+<td>Flag to indicate if the dataframe with feature importance will be returned.</td>
+</tr>
+<tr class="even">
+<td>save_df_path</td>
+<td>Path</td>
+<td>None</td>
+<td>Path where dataframe containing the permutation feature importance results will be saved.</td>
+</tr>
+<tr class="odd">
+<td>random_state</td>
+<td>int</td>
+<td>23</td>
+<td>Optional int that controls the shuffling applied to the data.</td>
+</tr>
+<tr class="even">
+<td>verbose</td>
+<td>bool</td>
+<td>True</td>
+<td>Flag that controls verbosity.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/analysis.py#L304" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="learner.step_importance" class="level3">
+<h3 class="anchored" data-anchor-id="learner.step_importance">Learner.step_importance</h3>
+<blockquote class="blockquote">
+<pre><code> Learner.step_importance (X=None, y=None,
+                          partial_n:(&lt;class'int'&gt;,&lt;class'float'&gt;)=None,
+                          method:str='permutation', step_names:list=None,
+                          sel_classes:(&lt;class'str'&gt;,&lt;class'list'&gt;)=None,
+                          n_steps:int=1, key_metric_idx:int=0,
+                          show_chart:bool=True, figsize:tuple=(10, 5),
+                          title:str=None, xlabel=None,
+                          return_df:bool=True,
+                          save_df_path:pathlib.Path=None,
+                          random_state:int=23, verbose:bool=True)</code></pre>
+</blockquote>
+<p>Calculates step importance as the drop in the model’s validation loss or metric when a step/s value/s is/are randomly shuffled</p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 25%">
+<col style="width: 34%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Details</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X</td>
+<td>NoneType</td>
+<td>None</td>
+<td>array-like object containing the time series. If None, all data in the validation set will be used.</td>
+</tr>
+<tr class="even">
+<td>y</td>
+<td>NoneType</td>
+<td>None</td>
+<td>array-like object containing the targets. If None, all targets in the validation set will be used.</td>
+</tr>
+<tr class="odd">
+<td>partial_n</td>
+<td>(&lt;class ‘int’&gt;, &lt;class ‘float’&gt;)</td>
+<td>None</td>
+<td># (int) or % (float) of used to measure feature importance. If None, all data will be used.</td>
+</tr>
+<tr class="even">
+<td>method</td>
+<td>str</td>
+<td>permutation</td>
+<td>Method used to invalidate feature. Use ‘permutation’ for shuffling or ‘ablation’ for setting values to np.nan.</td>
+</tr>
+<tr class="odd">
+<td>step_names</td>
+<td>list</td>
+<td>None</td>
+<td>Optional list of step names that will be displayed if available. Otherwise 0, 1, 2, etc.</td>
+</tr>
+<tr class="even">
+<td>sel_classes</td>
+<td>(&lt;class ‘str’&gt;, &lt;class ‘list’&gt;)</td>
+<td>None</td>
+<td>classes for which the analysis will be made</td>
+</tr>
+<tr class="odd">
+<td>n_steps</td>
+<td>int</td>
+<td>1</td>
+<td># of steps that will be analyzed at a time. Default is 1.</td>
+</tr>
+<tr class="even">
+<td>key_metric_idx</td>
+<td>int</td>
+<td>0</td>
+<td>Optional position of the metric used. If None or no metric is available, the loss will be used.</td>
+</tr>
+<tr class="odd">
+<td>show_chart</td>
+<td>bool</td>
+<td>True</td>
+<td>Flag to indicate if a chart showing permutation feature importance will be plotted.</td>
+</tr>
+<tr class="even">
+<td>figsize</td>
+<td>tuple</td>
+<td>(10, 5)</td>
+<td>Size of the chart.</td>
+</tr>
+<tr class="odd">
+<td>title</td>
+<td>str</td>
+<td>None</td>
+<td>Optional string that will be used as the chart title. If None ‘Permutation Feature Importance’.</td>
+</tr>
+<tr class="even">
+<td>xlabel</td>
+<td>NoneType</td>
+<td>None</td>
+<td>Optional string that will be used as the chart xlabel. If None ‘steps’.</td>
+</tr>
+<tr class="odd">
+<td>return_df</td>
+<td>bool</td>
+<td>True</td>
+<td>Flag to indicate if the dataframe with feature importance will be returned.</td>
+</tr>
+<tr class="even">
+<td>save_df_path</td>
+<td>Path</td>
+<td>None</td>
+<td>Path where dataframe containing the permutation feature importance results will be saved.</td>
+</tr>
+<tr class="odd">
+<td>random_state</td>
+<td>int</td>
+<td>23</td>
+<td>Optional int that controls the shuffling applied to the data.</td>
+</tr>
+<tr class="even">
+<td>verbose</td>
+<td>bool</td>
+<td>True</td>
+<td>Flag that controls verbosity.</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.data.external <span class="im">import</span> get_UCR_data</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.data.preprocessing <span class="im">import</span> TSRobustScale, TSStandardize</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.learner <span class="im">import</span> ts_learner</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.models.FCNPlus <span class="im">import</span> FCNPlus</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.metrics <span class="im">import</span> accuracy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dsid <span class="op">=</span> <span class="st">'NATOPS'</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X, y, splits <span class="op">=</span> get_UCR_data(dsid, split_data<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>tfms  <span class="op">=</span> [<span class="va">None</span>, [TSClassification()]]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>batch_tfms <span class="op">=</span> TSRobustScale()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>batch_tfms <span class="op">=</span> TSStandardize()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>dls <span class="op">=</span> get_ts_dls(X, y, splits<span class="op">=</span>splits, sel_vars<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">10</span>], sel_steps<span class="op">=</span><span class="bu">slice</span>(<span class="op">-</span><span class="dv">30</span>, <span class="va">None</span>), tfms<span class="op">=</span>tfms, batch_tfms<span class="op">=</span>batch_tfms)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> ts_learner(dls, FCNPlus, metrics<span class="op">=</span>accuracy, train_metrics<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>learn.fit_one_cycle(<span class="dv">2</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>learn.plot_metrics()</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>learn.show_probas()</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>learn.plot_confusion_matrix()</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>learn.plot_top_losses(X[splits[<span class="dv">1</span>]], y[splits[<span class="dv">1</span>]], largest<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>learn.top_losses(X[splits[<span class="dv">1</span>]], y[splits[<span class="dv">1</span>]], largest<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="020_analysis_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="020_analysis_files/figure-html/cell-9-output-2.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>(TensorBase([2.3490, 2.3218, 2.2956, 2.2231, 2.1906, 2.1742, 2.1699, 2.1641,
+             2.1579]),
+ [129, 149, 56, 9, 166, 116, 154, 110, 104])</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="020_analysis_files/figure-html/cell-9-output-9.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="020_analysis_files/figure-html/cell-9-output-10.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>learn.feature_importance()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>X.shape: (180, 24, 51)
+y.shape: (180,)
+Selected metric: accuracy
+Computing feature importance (permutation method)...</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      <progress value="0" class="" max="3" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      <progress value="0" class="" max="3" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      <progress value="0" class="" max="3" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      <progress value="0" class="" max="3" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      <progress value="0" class="" max="3" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="020_analysis_files/figure-html/cell-10-output-14.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Feature</th>
+      <th>accuracy</th>
+      <th>accuracy_change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>var_0</td>
+      <td>0.261111</td>
+      <td>0.066667</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>var_3</td>
+      <td>0.300000</td>
+      <td>0.027778</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>var_5</td>
+      <td>0.322222</td>
+      <td>0.005556</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>BASELINE</td>
+      <td>0.327778</td>
+      <td>-0.000000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>var_8</td>
+      <td>0.327778</td>
+      <td>-0.000000</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>var_10</td>
+      <td>0.327778</td>
+      <td>-0.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>learn.step_importance(n_steps<span class="op">=</span><span class="dv">5</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  0 step: BASELINE             accuracy: 0.327778</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      <progress value="0" class="" max="3" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  1 step: 21 to 25             accuracy: 0.322222</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  2 step: 26 to 30             accuracy: 0.327778</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      <progress value="0" class="" max="3" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  3 step: 31 to 35             accuracy: 0.311111</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  4 step: 36 to 40             accuracy: 0.272222</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-display">
+
+    <div>
+      <progress value="0" class="" max="3" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      0.00% [0/3 00:00&lt;?]
+    </div>
+    
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  5 step: 41 to 45             accuracy: 0.288889</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    progress:not([value]), progress:not([value])::-webkit-progress-bar {
+        background: repeating-linear-gradient(45deg, #7e7e7e, #7e7e7e 10px, #5c5c5c 10px, #5c5c5c 20px);
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  6 step: 46 to 50             accuracy: 0.305556
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="020_analysis_files/figure-html/cell-11-output-17.png" class="img-fluid"></p>
+</div>
+</div>
+<p>You may pass an X and y if you want to analyze a particular group of samples:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">learn.feature_importance</span><span class="er">(</span><span class="va">X</span><span class="op">=</span>X[splits[1]], <span class="va">y</span><span class="op">=</span>y[splits[1]]<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you have a large validation dataset, you may also use the partial_n argument to select a fixed amount of samples (integer) or a percentage of the validation dataset (float):</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">learn.feature_importance</span><span class="er">(</span><span class="va">partial_n</span><span class="op">=</span>.1<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">learn.feature_importance</span><span class="er">(</span><span class="va">partial_n</span><span class="op">=</span>100<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

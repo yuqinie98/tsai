@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>tsai - Model utilities</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="tsai - Model utilities">
+<meta property="og:description" content="source">
+<meta property="og:site-name" content="tsai">
+<meta name="twitter:title" content="tsai - Model utilities">
+<meta name="twitter:description" content="source">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">tsai</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/timeseriesAI/tsai"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Model utilities</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">tsai</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials.html" class="sidebar-item-text sidebar-link">Tutorial notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Data</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.core.html" class="sidebar-item-text sidebar-link">Data Core</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.external.html" class="sidebar-item-text sidebar-link">External data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.preparation.html" class="sidebar-item-text sidebar-link">Data preparation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.validation.html" class="sidebar-item-text sidebar-link">Spliting data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.preprocessing.html" class="sidebar-item-text sidebar-link">Data preprocessing</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.unwindowed.html" class="sidebar-item-text sidebar-link">Unwindowed datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.transforms.html" class="sidebar-item-text sidebar-link">Time Series Data Augmentation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.mixed_augmentation.html" class="sidebar-item-text sidebar-link">Label-mixing transforms</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.image.html" class="sidebar-item-text sidebar-link">Imaging Time Series</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.features.html" class="sidebar-item-text sidebar-link">Featurizing Time Series</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.tabular.html" class="sidebar-item-text sidebar-link">Time Series Tabular Data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.mixed.html" class="sidebar-item-text sidebar-link">Mixed data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.metadatasets.html" class="sidebar-item-text sidebar-link">Metadataset</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Models</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.layers.html" class="sidebar-item-text sidebar-link">Layers</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.utils.html" class="sidebar-item-text sidebar-link active">Model utilities</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">MLPs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.mlp.html" class="sidebar-item-text sidebar-link">MLP</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.gmlp.html" class="sidebar-item-text sidebar-link">gMLP</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">RNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn.html" class="sidebar-item-text sidebar-link">RNNs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnnplus.html" class="sidebar-item-text sidebar-link">RNNPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tssequencerplus.html" class="sidebar-item-text sidebar-link">TSSequencerPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">CNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.fcn.html" class="sidebar-item-text sidebar-link">FCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.fcnplus.html" class="sidebar-item-text sidebar-link">FCNPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.resnet.html" class="sidebar-item-text sidebar-link">ResNet</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.resnetplus.html" class="sidebar-item-text sidebar-link">ResNetPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xresnet1d.html" class="sidebar-item-text sidebar-link">XResNet1d</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xresnet1dplus.html" class="sidebar-item-text sidebar-link">XResNet1dPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rescnn.html" class="sidebar-item-text sidebar-link">ResCNN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tcn.html" class="sidebar-item-text sidebar-link">TCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.inceptiontime.html" class="sidebar-item-text sidebar-link">InceptionTime</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.inceptiontimeplus.html" class="sidebar-item-text sidebar-link">InceptionTimePlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xceptiontime.html" class="sidebar-item-text sidebar-link">XceptionTime</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xceptiontimeplus.html" class="sidebar-item-text sidebar-link">XceptionTimePlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.omniscalecnn.html" class="sidebar-item-text sidebar-link">OmniScaleCNN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xcm.html" class="sidebar-item-text sidebar-link">XCM</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xcmplus.html" class="sidebar-item-text sidebar-link">XCMPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">RNN-CNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn_fcn.html" class="sidebar-item-text sidebar-link">RNN_FCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn_fcnplus.html" class="sidebar-item-text sidebar-link">RNN_FCNPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">Wavelet-based NNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.mwdn.html" class="sidebar-item-text sidebar-link">mWDN</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">Transformers</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.positional_encoders.html" class="sidebar-item-text sidebar-link">Positional encoders</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.transformermodel.html" class="sidebar-item-text sidebar-link">TransformerModel</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tst.html" class="sidebar-item-text sidebar-link">TST</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tstplus.html" class="sidebar-item-text sidebar-link">TSTPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tsperceiver.html" class="sidebar-item-text sidebar-link">TSPerceiver</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tsitplus.html" class="sidebar-item-text sidebar-link">TSiT</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">ROCKETs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rocket.html" class="sidebar-item-text sidebar-link">ROCKET</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rocket_pytorch.html" class="sidebar-item-text sidebar-link">ROCKET Pytorch</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocket.html" class="sidebar-item-text sidebar-link">MINIROCKET</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocket_pytorch.html" class="sidebar-item-text sidebar-link">MINIROCKET Pytorch</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocketplus_pytorch.html" class="sidebar-item-text sidebar-link">MINIROCKETPlus Pytorch</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">Tabular models</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabmodel.html" class="sidebar-item-text sidebar-link">TabModel</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabtransformer.html" class="sidebar-item-text sidebar-link">TabTransformer</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.gatedtabtransformer.html" class="sidebar-item-text sidebar-link">GatedTabTransformer</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabfusiontransformer.html" class="sidebar-item-text sidebar-link">TabFusionTransformer</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">Miscellaneous</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.multiinputnet.html" class="sidebar-item-text sidebar-link">MultiInputNet</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.misc.html" class="sidebar-item-text sidebar-link">Miscellaneous</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="true">Training</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./learner.html" class="sidebar-item-text sidebar-link">Learner</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tslearner.html" class="sidebar-item-text sidebar-link">TSLearner</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./optimizer.html" class="sidebar-item-text sidebar-link">Optimizers</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./metrics.html" class="sidebar-item-text sidebar-link">Metrics</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">Callbacks</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.core.html" class="sidebar-item-text sidebar-link">Callback</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.predictiondynamics.html" class="sidebar-item-text sidebar-link">PredictionDynamics</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.noisy_student.html" class="sidebar-item-text sidebar-link">Noisy student</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.mvp.html" class="sidebar-item-text sidebar-link">MVP (aka TSBERT)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.experimental.html" class="sidebar-item-text sidebar-link">Experimental Callbacks</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./calibration.html" class="sidebar-item-text sidebar-link">Calibration</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="true">HPO &amp; experiment tracking</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./optuna.html" class="sidebar-item-text sidebar-link">Optuna</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./wandb.html" class="sidebar-item-text sidebar-link">Weights &amp; Biases Sweeps</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference.html" class="sidebar-item-text sidebar-link">Inference</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./analysis.html" class="sidebar-item-text sidebar-link">Analysis</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.explainability.html" class="sidebar-item-text sidebar-link">Explainability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">Utilities</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#apply_idxs" id="toc-apply_idxs" class="nav-link active" data-scroll-target="#apply_idxs">apply_idxs</a></li>
+  <li><a href="#seqtokenizer" id="toc-seqtokenizer" class="nav-link" data-scroll-target="#seqtokenizer">SeqTokenizer</a></li>
+  <li><a href="#get_embed_size" id="toc-get_embed_size" class="nav-link" data-scroll-target="#get_embed_size">get_embed_size</a></li>
+  <li><a href="#has_weight_or_bias" id="toc-has_weight_or_bias" class="nav-link" data-scroll-target="#has_weight_or_bias">has_weight_or_bias</a></li>
+  <li><a href="#has_weight" id="toc-has_weight" class="nav-link" data-scroll-target="#has_weight">has_weight</a></li>
+  <li><a href="#has_bias" id="toc-has_bias" class="nav-link" data-scroll-target="#has_bias">has_bias</a></li>
+  <li><a href="#is_conv" id="toc-is_conv" class="nav-link" data-scroll-target="#is_conv">is_conv</a></li>
+  <li><a href="#is_affine_layer" id="toc-is_affine_layer" class="nav-link" data-scroll-target="#is_affine_layer">is_affine_layer</a></li>
+  <li><a href="#is_conv_linear" id="toc-is_conv_linear" class="nav-link" data-scroll-target="#is_conv_linear">is_conv_linear</a></li>
+  <li><a href="#is_bn" id="toc-is_bn" class="nav-link" data-scroll-target="#is_bn">is_bn</a></li>
+  <li><a href="#is_linear" id="toc-is_linear" class="nav-link" data-scroll-target="#is_linear">is_linear</a></li>
+  <li><a href="#is_layer" id="toc-is_layer" class="nav-link" data-scroll-target="#is_layer">is_layer</a></li>
+  <li><a href="#get_layers" id="toc-get_layers" class="nav-link" data-scroll-target="#get_layers">get_layers</a></li>
+  <li><a href="#check_weight" id="toc-check_weight" class="nav-link" data-scroll-target="#check_weight">check_weight</a></li>
+  <li><a href="#check_bias" id="toc-check_bias" class="nav-link" data-scroll-target="#check_bias">check_bias</a></li>
+  <li><a href="#get_nf" id="toc-get_nf" class="nav-link" data-scroll-target="#get_nf">get_nf</a></li>
+  <li><a href="#ts_splitter" id="toc-ts_splitter" class="nav-link" data-scroll-target="#ts_splitter">ts_splitter</a></li>
+  <li><a href="#transfer_weights" id="toc-transfer_weights" class="nav-link" data-scroll-target="#transfer_weights">transfer_weights</a></li>
+  <li><a href="#build_ts_model" id="toc-build_ts_model" class="nav-link" data-scroll-target="#build_ts_model">build_ts_model</a></li>
+  <li><a href="#count_parameters" id="toc-count_parameters" class="nav-link" data-scroll-target="#count_parameters">count_parameters</a></li>
+  <li><a href="#build_tsimage_model" id="toc-build_tsimage_model" class="nav-link" data-scroll-target="#build_tsimage_model">build_tsimage_model</a></li>
+  <li><a href="#build_tabular_model" id="toc-build_tabular_model" class="nav-link" data-scroll-target="#build_tabular_model">build_tabular_model</a></li>
+  <li><a href="#get_clones" id="toc-get_clones" class="nav-link" data-scroll-target="#get_clones">get_clones</a></li>
+  <li><a href="#split_model" id="toc-split_model" class="nav-link" data-scroll-target="#split_model">split_model</a></li>
+  <li><a href="#output_size_calculator" id="toc-output_size_calculator" class="nav-link" data-scroll-target="#output_size_calculator">output_size_calculator</a></li>
+  <li><a href="#change_model_head" id="toc-change_model_head" class="nav-link" data-scroll-target="#change_model_head">change_model_head</a></li>
+  <li><a href="#true_forecaster" id="toc-true_forecaster" class="nav-link" data-scroll-target="#true_forecaster">true_forecaster</a></li>
+  <li><a href="#naive_forecaster" id="toc-naive_forecaster" class="nav-link" data-scroll-target="#naive_forecaster">naive_forecaster</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/timeseriesAI/tsai/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Model utilities</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<blockquote class="blockquote">
+<p>Utility functions used to build PyTorch timeseries models.</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L23" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="apply_idxs" class="level3">
+<h3 class="anchored" data-anchor-id="apply_idxs">apply_idxs</h3>
+<blockquote class="blockquote">
+<pre><code> apply_idxs (o, idxs)</code></pre>
+</blockquote>
+<p>Function to apply indices to zarr, dask and numpy arrays</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L30" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="seqtokenizer" class="level3">
+<h3 class="anchored" data-anchor-id="seqtokenizer">SeqTokenizer</h3>
+<blockquote class="blockquote">
+<pre><code> SeqTokenizer (c_in, embed_dim, token_size=60, norm=False)</code></pre>
+</blockquote>
+<p>Generates non-overlapping tokens from sub-sequences within a sequence by applying a sliding window</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L38" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_embed_size" class="level3">
+<h3 class="anchored" data-anchor-id="get_embed_size">get_embed_size</h3>
+<blockquote class="blockquote">
+<pre><code> get_embed_size (n_cat, rule='log2')</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>test_eq(get_embed_size(<span class="dv">35</span>), <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L79" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="has_weight_or_bias" class="level3">
+<h3 class="anchored" data-anchor-id="has_weight_or_bias">has_weight_or_bias</h3>
+<blockquote class="blockquote">
+<pre><code> has_weight_or_bias (l)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L76" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="has_weight" class="level3">
+<h3 class="anchored" data-anchor-id="has_weight">has_weight</h3>
+<blockquote class="blockquote">
+<pre><code> has_weight (l)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L73" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="has_bias" class="level3">
+<h3 class="anchored" data-anchor-id="has_bias">has_bias</h3>
+<blockquote class="blockquote">
+<pre><code> has_bias (l)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L69" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="is_conv" class="level3">
+<h3 class="anchored" data-anchor-id="is_conv">is_conv</h3>
+<blockquote class="blockquote">
+<pre><code> is_conv (l)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L66" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="is_affine_layer" class="level3">
+<h3 class="anchored" data-anchor-id="is_affine_layer">is_affine_layer</h3>
+<blockquote class="blockquote">
+<pre><code> is_affine_layer (l)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L62" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="is_conv_linear" class="level3">
+<h3 class="anchored" data-anchor-id="is_conv_linear">is_conv_linear</h3>
+<blockquote class="blockquote">
+<pre><code> is_conv_linear (l)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L58" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="is_bn" class="level3">
+<h3 class="anchored" data-anchor-id="is_bn">is_bn</h3>
+<blockquote class="blockquote">
+<pre><code> is_bn (l)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L55" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="is_linear" class="level3">
+<h3 class="anchored" data-anchor-id="is_linear">is_linear</h3>
+<blockquote class="blockquote">
+<pre><code> is_linear (l)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L50" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="is_layer" class="level3">
+<h3 class="anchored" data-anchor-id="is_layer">is_layer</h3>
+<blockquote class="blockquote">
+<pre><code> is_layer (*args)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L45" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_layers" class="level3">
+<h3 class="anchored" data-anchor-id="get_layers">get_layers</h3>
+<blockquote class="blockquote">
+<pre><code> get_layers (model, cond=&lt;function noop&gt;, full=True)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L93" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="check_weight" class="level3">
+<h3 class="anchored" data-anchor-id="check_weight">check_weight</h3>
+<blockquote class="blockquote">
+<pre><code> check_weight (m, cond=&lt;function noop&gt;, verbose=False)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L83" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="check_bias" class="level3">
+<h3 class="anchored" data-anchor-id="check_bias">check_bias</h3>
+<blockquote class="blockquote">
+<pre><code> check_bias (m, cond=&lt;function noop&gt;, verbose=False)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L104" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_nf" class="level3">
+<h3 class="anchored" data-anchor-id="get_nf">get_nf</h3>
+<blockquote class="blockquote">
+<pre><code> get_nf (m)</code></pre>
+</blockquote>
+<p>Get nf from model’s first linear layer in head</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L109" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ts_splitter" class="level3">
+<h3 class="anchored" data-anchor-id="ts_splitter">ts_splitter</h3>
+<blockquote class="blockquote">
+<pre><code> ts_splitter (m)</code></pre>
+</blockquote>
+<p>Split of a model between body and head</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L114" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="transfer_weights" class="level3">
+<h3 class="anchored" data-anchor-id="transfer_weights">transfer_weights</h3>
+<blockquote class="blockquote">
+<pre><code> transfer_weights (model, weights_path:pathlib.Path,
+                   device:torch.device=None, exclude_head:bool=True)</code></pre>
+</blockquote>
+<p>Utility function that allows to easily transfer weights between models. Taken from the great self-supervised repository created by Kerem Turgutlu. https://github.com/KeremTurgutlu/self_supervised/blob/d87ebd9b4961c7da0efd6073c42782bbc61aaa2e/self_supervised/utils.py</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L142" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="build_ts_model" class="level3">
+<h3 class="anchored" data-anchor-id="build_ts_model">build_ts_model</h3>
+<blockquote class="blockquote">
+<pre><code> build_ts_model (arch, c_in=None, c_out=None, seq_len=None, d=None,
+                 dls=None, device=None, verbose=False, pretrained=False,
+                 weights_path=None, exclude_head=True, cut=-1, init=None,
+                 arch_config={}, **kwargs)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L209" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="count_parameters" class="level3">
+<h3 class="anchored" data-anchor-id="count_parameters">count_parameters</h3>
+<blockquote class="blockquote">
+<pre><code> count_parameters (model, trainable=True)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L215" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="build_tsimage_model" class="level3">
+<h3 class="anchored" data-anchor-id="build_tsimage_model">build_tsimage_model</h3>
+<blockquote class="blockquote">
+<pre><code> build_tsimage_model (arch, c_in=None, c_out=None, dls=None,
+                      pretrained=False, device=None, verbose=False,
+                      init=None, arch_config={}, **kwargs)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L229" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="build_tabular_model" class="level3">
+<h3 class="anchored" data-anchor-id="build_tabular_model">build_tabular_model</h3>
+<blockquote class="blockquote">
+<pre><code> build_tabular_model (arch, dls, layers=None, emb_szs=None, n_out=None,
+                      y_range=None, device=None, arch_config={}, **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.data.external <span class="im">import</span> get_UCR_data</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.data.core <span class="im">import</span> TSCategorize, get_ts_dls</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.data.preprocessing <span class="im">import</span> TSStandardize</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.models.InceptionTime <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>X, y, splits <span class="op">=</span> get_UCR_data(<span class="st">'NATOPS'</span>, split_data<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>tfms <span class="op">=</span> [<span class="va">None</span>, TSCategorize()]</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>batch_tfms <span class="op">=</span> TSStandardize()</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>dls <span class="op">=</span> get_ts_dls(X, y, splits, tfms<span class="op">=</span>tfms, batch_tfms<span class="op">=</span>batch_tfms)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> build_ts_model(InceptionTime, dls<span class="op">=</span>dls)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>test_eq(count_parameters(model), <span class="dv">460038</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L247" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_clones" class="level3">
+<h3 class="anchored" data-anchor-id="get_clones">get_clones</h3>
+<blockquote class="blockquote">
+<pre><code> get_clones (module, N)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> nn.Conv1d(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">3</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>get_clones(m, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>ModuleList(
+  (0): Conv1d(3, 4, kernel_size=(3,), stride=(1,))
+  (1): Conv1d(3, 4, kernel_size=(3,), stride=(1,))
+  (2): Conv1d(3, 4, kernel_size=(3,), stride=(1,))
+)</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L251" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="split_model" class="level3">
+<h3 class="anchored" data-anchor-id="split_model">split_model</h3>
+<blockquote class="blockquote">
+<pre><code> split_model (m)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L255" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="output_size_calculator" class="level3">
+<h3 class="anchored" data-anchor-id="output_size_calculator">output_size_calculator</h3>
+<blockquote class="blockquote">
+<pre><code> output_size_calculator (mod, c_in, seq_len=None)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>c_in <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>seq_len <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> nn.Conv1d(<span class="dv">3</span>, <span class="dv">12</span>, kernel_size<span class="op">=</span><span class="dv">3</span>, stride<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>new_c_in, new_seq_len <span class="op">=</span> output_size_calculator(m, c_in, seq_len)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>test_eq((new_c_in, new_seq_len), (<span class="dv">12</span>, <span class="dv">14</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[W NNPACK.cpp:53] Could not initialize NNPACK! Reason: Unsupported hardware.</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L276" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="change_model_head" class="level3">
+<h3 class="anchored" data-anchor-id="change_model_head">change_model_head</h3>
+<blockquote class="blockquote">
+<pre><code> change_model_head (model, custom_head, **kwargs)</code></pre>
+</blockquote>
+<p>Replaces a model’s head by a custom head as long as the model has a head, head_nf, c_out and seq_len attributes</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L290" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="true_forecaster" class="level3">
+<h3 class="anchored" data-anchor-id="true_forecaster">true_forecaster</h3>
+<blockquote class="blockquote">
+<pre><code> true_forecaster (o, split, horizon=1)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/models/utils.py#L282" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="naive_forecaster" class="level3">
+<h3 class="anchored" data-anchor-id="naive_forecaster">naive_forecaster</h3>
+<blockquote class="blockquote">
+<pre><code> naive_forecaster (o, split, horizon=1)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.random.rand(<span class="dv">20</span>).cumsum()</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>split <span class="op">=</span> np.arange(<span class="dv">10</span>, <span class="dv">20</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>a, naive_forecaster(a, split, <span class="dv">1</span>), true_forecaster(a, split, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(array([0.64747126, 0.92030628, 1.16086401, 1.83041763, 1.84921046,
+        2.39911269, 3.06319539, 3.44398946, 3.97081575, 4.61491852,
+        5.55827365, 5.86428861, 6.4842958 , 7.06224848, 7.59103433,
+        7.83621709, 8.5838799 , 8.65897873, 9.43034829, 9.97025373]),
+ array([4.61491852, 5.55827365, 5.86428861, 6.4842958 , 7.06224848,
+        7.59103433, 7.83621709, 8.5838799 , 8.65897873, 9.43034829]),
+ array([5.55827365, 5.86428861, 6.4842958 , 7.06224848, 7.59103433,
+        7.83621709, 8.5838799 , 8.65897873, 9.43034829, 9.97025373]))</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

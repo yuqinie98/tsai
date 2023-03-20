@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>tsai - Time Series Data Augmentation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="tsai - Time Series Data Augmentation">
+<meta property="og:description" content="source">
+<meta property="og:site-name" content="tsai">
+<meta name="twitter:title" content="tsai - Time Series Data Augmentation">
+<meta name="twitter:description" content="source">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">tsai</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/timeseriesAI/tsai"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Time Series Data Augmentation</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">tsai</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tutorials.html" class="sidebar-item-text sidebar-link">Tutorial notebooks</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Data</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.core.html" class="sidebar-item-text sidebar-link">Data Core</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.external.html" class="sidebar-item-text sidebar-link">External data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.preparation.html" class="sidebar-item-text sidebar-link">Data preparation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.validation.html" class="sidebar-item-text sidebar-link">Spliting data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.preprocessing.html" class="sidebar-item-text sidebar-link">Data preprocessing</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.unwindowed.html" class="sidebar-item-text sidebar-link">Unwindowed datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.transforms.html" class="sidebar-item-text sidebar-link active">Time Series Data Augmentation</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.mixed_augmentation.html" class="sidebar-item-text sidebar-link">Label-mixing transforms</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.image.html" class="sidebar-item-text sidebar-link">Imaging Time Series</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.features.html" class="sidebar-item-text sidebar-link">Featurizing Time Series</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.tabular.html" class="sidebar-item-text sidebar-link">Time Series Tabular Data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.mixed.html" class="sidebar-item-text sidebar-link">Mixed data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.metadatasets.html" class="sidebar-item-text sidebar-link">Metadataset</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Models</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.layers.html" class="sidebar-item-text sidebar-link">Layers</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.utils.html" class="sidebar-item-text sidebar-link">Model utilities</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">MLPs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.mlp.html" class="sidebar-item-text sidebar-link">MLP</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.gmlp.html" class="sidebar-item-text sidebar-link">gMLP</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">RNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn.html" class="sidebar-item-text sidebar-link">RNNs</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnnplus.html" class="sidebar-item-text sidebar-link">RNNPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tssequencerplus.html" class="sidebar-item-text sidebar-link">TSSequencerPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">CNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.fcn.html" class="sidebar-item-text sidebar-link">FCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.fcnplus.html" class="sidebar-item-text sidebar-link">FCNPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.resnet.html" class="sidebar-item-text sidebar-link">ResNet</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.resnetplus.html" class="sidebar-item-text sidebar-link">ResNetPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xresnet1d.html" class="sidebar-item-text sidebar-link">XResNet1d</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xresnet1dplus.html" class="sidebar-item-text sidebar-link">XResNet1dPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rescnn.html" class="sidebar-item-text sidebar-link">ResCNN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tcn.html" class="sidebar-item-text sidebar-link">TCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.inceptiontime.html" class="sidebar-item-text sidebar-link">InceptionTime</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.inceptiontimeplus.html" class="sidebar-item-text sidebar-link">InceptionTimePlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xceptiontime.html" class="sidebar-item-text sidebar-link">XceptionTime</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xceptiontimeplus.html" class="sidebar-item-text sidebar-link">XceptionTimePlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.omniscalecnn.html" class="sidebar-item-text sidebar-link">OmniScaleCNN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xcm.html" class="sidebar-item-text sidebar-link">XCM</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.xcmplus.html" class="sidebar-item-text sidebar-link">XCMPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">RNN-CNNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn_fcn.html" class="sidebar-item-text sidebar-link">RNN_FCN</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rnn_fcnplus.html" class="sidebar-item-text sidebar-link">RNN_FCNPlus</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">Wavelet-based NNs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.mwdn.html" class="sidebar-item-text sidebar-link">mWDN</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">Transformers</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.positional_encoders.html" class="sidebar-item-text sidebar-link">Positional encoders</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.transformermodel.html" class="sidebar-item-text sidebar-link">TransformerModel</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tst.html" class="sidebar-item-text sidebar-link">TST</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tstplus.html" class="sidebar-item-text sidebar-link">TSTPlus</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tsperceiver.html" class="sidebar-item-text sidebar-link">TSPerceiver</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tsitplus.html" class="sidebar-item-text sidebar-link">TSiT</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">ROCKETs</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rocket.html" class="sidebar-item-text sidebar-link">ROCKET</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.rocket_pytorch.html" class="sidebar-item-text sidebar-link">ROCKET Pytorch</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocket.html" class="sidebar-item-text sidebar-link">MINIROCKET</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocket_pytorch.html" class="sidebar-item-text sidebar-link">MINIROCKET Pytorch</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.minirocketplus_pytorch.html" class="sidebar-item-text sidebar-link">MINIROCKETPlus Pytorch</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">Tabular models</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabmodel.html" class="sidebar-item-text sidebar-link">TabModel</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabtransformer.html" class="sidebar-item-text sidebar-link">TabTransformer</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.gatedtabtransformer.html" class="sidebar-item-text sidebar-link">GatedTabTransformer</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.tabfusiontransformer.html" class="sidebar-item-text sidebar-link">TabFusionTransformer</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">Miscellaneous</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.multiinputnet.html" class="sidebar-item-text sidebar-link">MultiInputNet</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.misc.html" class="sidebar-item-text sidebar-link">Miscellaneous</a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="true">Training</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./learner.html" class="sidebar-item-text sidebar-link">Learner</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tslearner.html" class="sidebar-item-text sidebar-link">TSLearner</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./optimizer.html" class="sidebar-item-text sidebar-link">Optimizers</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./metrics.html" class="sidebar-item-text sidebar-link">Metrics</a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">Callbacks</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.core.html" class="sidebar-item-text sidebar-link">Callback</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.predictiondynamics.html" class="sidebar-item-text sidebar-link">PredictionDynamics</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.noisy_student.html" class="sidebar-item-text sidebar-link">Noisy student</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.mvp.html" class="sidebar-item-text sidebar-link">MVP (aka TSBERT)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./callback.experimental.html" class="sidebar-item-text sidebar-link">Experimental Callbacks</a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./calibration.html" class="sidebar-item-text sidebar-link">Calibration</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="true">HPO &amp; experiment tracking</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./optuna.html" class="sidebar-item-text sidebar-link">Optuna</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./wandb.html" class="sidebar-item-text sidebar-link">Weights &amp; Biases Sweeps</a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inference.html" class="sidebar-item-text sidebar-link">Inference</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./analysis.html" class="sidebar-item-text sidebar-link">Analysis</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./models.explainability.html" class="sidebar-item-text sidebar-link">Explainability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./utils.html" class="sidebar-item-text sidebar-link">Utilities</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#tsidentity" id="toc-tsidentity" class="nav-link active" data-scroll-target="#tsidentity">TSIdentity</a></li>
+  <li><a href="#tsshuffle_hls" id="toc-tsshuffle_hls" class="nav-link" data-scroll-target="#tsshuffle_hls">TSShuffle_HLs</a></li>
+  <li><a href="#tsshufflesteps" id="toc-tsshufflesteps" class="nav-link" data-scroll-target="#tsshufflesteps">TSShuffleSteps</a></li>
+  <li><a href="#tsgaussiannoise" id="toc-tsgaussiannoise" class="nav-link" data-scroll-target="#tsgaussiannoise">TSGaussianNoise</a></li>
+  <li><a href="#tsmagmulnoise" id="toc-tsmagmulnoise" class="nav-link" data-scroll-target="#tsmagmulnoise">TSMagMulNoise</a></li>
+  <li><a href="#tsmagaddnoise" id="toc-tsmagaddnoise" class="nav-link" data-scroll-target="#tsmagaddnoise">TSMagAddNoise</a></li>
+  <li><a href="#random_cum_linear_generator" id="toc-random_cum_linear_generator" class="nav-link" data-scroll-target="#random_cum_linear_generator">random_cum_linear_generator</a></li>
+  <li><a href="#random_cum_noise_generator" id="toc-random_cum_noise_generator" class="nav-link" data-scroll-target="#random_cum_noise_generator">random_cum_noise_generator</a></li>
+  <li><a href="#random_cum_curve_generator" id="toc-random_cum_curve_generator" class="nav-link" data-scroll-target="#random_cum_curve_generator">random_cum_curve_generator</a></li>
+  <li><a href="#random_curve_generator" id="toc-random_curve_generator" class="nav-link" data-scroll-target="#random_curve_generator">random_curve_generator</a></li>
+  <li><a href="#tstimenoise" id="toc-tstimenoise" class="nav-link" data-scroll-target="#tstimenoise">TSTimeNoise</a></li>
+  <li><a href="#tsmagwarp" id="toc-tsmagwarp" class="nav-link" data-scroll-target="#tsmagwarp">TSMagWarp</a></li>
+  <li><a href="#tstimewarp" id="toc-tstimewarp" class="nav-link" data-scroll-target="#tstimewarp">TSTimeWarp</a></li>
+  <li><a href="#tswindowwarp" id="toc-tswindowwarp" class="nav-link" data-scroll-target="#tswindowwarp">TSWindowWarp</a></li>
+  <li><a href="#tsmagscalepervar" id="toc-tsmagscalepervar" class="nav-link" data-scroll-target="#tsmagscalepervar">TSMagScalePerVar</a></li>
+  <li><a href="#tsmagscale" id="toc-tsmagscale" class="nav-link" data-scroll-target="#tsmagscale">TSMagScale</a></li>
+  <li><a href="#tsrandomresizedcrop" id="toc-tsrandomresizedcrop" class="nav-link" data-scroll-target="#tsrandomresizedcrop">TSRandomResizedCrop</a></li>
+  <li><a href="#tswindowslicing" id="toc-tswindowslicing" class="nav-link" data-scroll-target="#tswindowslicing">TSWindowSlicing</a></li>
+  <li><a href="#tsrandomzoomout" id="toc-tsrandomzoomout" class="nav-link" data-scroll-target="#tsrandomzoomout">TSRandomZoomOut</a></li>
+  <li><a href="#tsrandomtimescale" id="toc-tsrandomtimescale" class="nav-link" data-scroll-target="#tsrandomtimescale">TSRandomTimeScale</a></li>
+  <li><a href="#tsrandomtimestep" id="toc-tsrandomtimestep" class="nav-link" data-scroll-target="#tsrandomtimestep">TSRandomTimeStep</a></li>
+  <li><a href="#tsresamplesteps" id="toc-tsresamplesteps" class="nav-link" data-scroll-target="#tsresamplesteps">TSResampleSteps</a></li>
+  <li><a href="#tsblur" id="toc-tsblur" class="nav-link" data-scroll-target="#tsblur">TSBlur</a></li>
+  <li><a href="#tssmooth" id="toc-tssmooth" class="nav-link" data-scroll-target="#tssmooth">TSSmooth</a></li>
+  <li><a href="#tsfreqdenoise" id="toc-tsfreqdenoise" class="nav-link" data-scroll-target="#tsfreqdenoise">TSFreqDenoise</a></li>
+  <li><a href="#maddest" id="toc-maddest" class="nav-link" data-scroll-target="#maddest">maddest</a></li>
+  <li><a href="#tsrandomfreqnoise" id="toc-tsrandomfreqnoise" class="nav-link" data-scroll-target="#tsrandomfreqnoise">TSRandomFreqNoise</a></li>
+  <li><a href="#tsrandomresizedlookback" id="toc-tsrandomresizedlookback" class="nav-link" data-scroll-target="#tsrandomresizedlookback">TSRandomResizedLookBack</a></li>
+  <li><a href="#tsrandomlookbackout" id="toc-tsrandomlookbackout" class="nav-link" data-scroll-target="#tsrandomlookbackout">TSRandomLookBackOut</a></li>
+  <li><a href="#tsvarout" id="toc-tsvarout" class="nav-link" data-scroll-target="#tsvarout">TSVarOut</a></li>
+  <li><a href="#tscutout" id="toc-tscutout" class="nav-link" data-scroll-target="#tscutout">TSCutOut</a></li>
+  <li><a href="#tstimestepout" id="toc-tstimestepout" class="nav-link" data-scroll-target="#tstimestepout">TSTimeStepOut</a></li>
+  <li><a href="#tsrandomcroppad" id="toc-tsrandomcroppad" class="nav-link" data-scroll-target="#tsrandomcroppad">TSRandomCropPad</a></li>
+  <li><a href="#tsmaskout" id="toc-tsmaskout" class="nav-link" data-scroll-target="#tsmaskout">TSMaskOut</a></li>
+  <li><a href="#tsinputdropout" id="toc-tsinputdropout" class="nav-link" data-scroll-target="#tsinputdropout">TSInputDropout</a></li>
+  <li><a href="#tstranslatex" id="toc-tstranslatex" class="nav-link" data-scroll-target="#tstranslatex">TSTranslateX</a></li>
+  <li><a href="#tsrandomshift" id="toc-tsrandomshift" class="nav-link" data-scroll-target="#tsrandomshift">TSRandomShift</a></li>
+  <li><a href="#tshorizontalflip" id="toc-tshorizontalflip" class="nav-link" data-scroll-target="#tshorizontalflip">TSHorizontalFlip</a></li>
+  <li><a href="#tsrandomtrend" id="toc-tsrandomtrend" class="nav-link" data-scroll-target="#tsrandomtrend">TSRandomTrend</a></li>
+  <li><a href="#tsverticalflip" id="toc-tsverticalflip" class="nav-link" data-scroll-target="#tsverticalflip">TSVerticalFlip</a></li>
+  <li><a href="#tsresize" id="toc-tsresize" class="nav-link" data-scroll-target="#tsresize">TSResize</a></li>
+  <li><a href="#tsrandomsize" id="toc-tsrandomsize" class="nav-link" data-scroll-target="#tsrandomsize">TSRandomSize</a></li>
+  <li><a href="#tsrandomlowres" id="toc-tsrandomlowres" class="nav-link" data-scroll-target="#tsrandomlowres">TSRandomLowRes</a></li>
+  <li><a href="#tsdownupscale" id="toc-tsdownupscale" class="nav-link" data-scroll-target="#tsdownupscale">TSDownUpScale</a></li>
+  <li><a href="#tsrandomdownupscale" id="toc-tsrandomdownupscale" class="nav-link" data-scroll-target="#tsrandomdownupscale">TSRandomDownUpScale</a></li>
+  <li><a href="#tsrandomconv" id="toc-tsrandomconv" class="nav-link" data-scroll-target="#tsrandomconv">TSRandomConv</a></li>
+  <li><a href="#tsrandom2value" id="toc-tsrandom2value" class="nav-link" data-scroll-target="#tsrandom2value">TSRandom2Value</a></li>
+  <li><a href="#tsmask2value" id="toc-tsmask2value" class="nav-link" data-scroll-target="#tsmask2value">TSMask2Value</a></li>
+  <li><a href="#randaugment" id="toc-randaugment" class="nav-link" data-scroll-target="#randaugment">RandAugment</a></li>
+  <li><a href="#testtfm" id="toc-testtfm" class="nav-link" data-scroll-target="#testtfm">TestTfm</a></li>
+  <li><a href="#get_tfm_name" id="toc-get_tfm_name" class="nav-link" data-scroll-target="#get_tfm_name">get_tfm_name</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/timeseriesAI/tsai/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Time Series Data Augmentation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<blockquote class="blockquote">
+<p>Functions used to transform TSTensors (Data Augmentation)</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.data.core <span class="im">import</span> TSCategorize</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.data.external <span class="im">import</span> get_UCR_data</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tsai.data.preprocessing <span class="im">import</span> TSStandardize</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dsid <span class="op">=</span> <span class="st">'NATOPS'</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X, y, splits <span class="op">=</span> get_UCR_data(dsid, return_split<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tfms <span class="op">=</span> [<span class="va">None</span>, TSCategorize()]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>batch_tfms <span class="op">=</span> TSStandardize()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>dls <span class="op">=</span> get_ts_dls(X, y, tfms<span class="op">=</span>tfms, splits<span class="op">=</span>splits, batch_tfms<span class="op">=</span>batch_tfms, bs<span class="op">=</span><span class="dv">128</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>xb, yb <span class="op">=</span> <span class="bu">next</span>(<span class="bu">iter</span>(dls.train))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L25" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="tsidentity" class="level3">
+<h3 class="anchored" data-anchor-id="tsidentity">TSIdentity</h3>
+<blockquote class="blockquote">
+<pre><code> TSIdentity (magnitude=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies the identity tfm to a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSIdentity()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L35" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsshuffle_hls" class="level3">
+<h3 class="anchored" data-anchor-id="tsshuffle_hls">TSShuffle_HLs</h3>
+<blockquote class="blockquote">
+<pre><code> TSShuffle_HLs (magnitude=1.0, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Randomly shuffles HIs/LOs of an OHLC <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSShuffle_HLs()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L57" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsshufflesteps" class="level3">
+<h3 class="anchored" data-anchor-id="tsshufflesteps">TSShuffleSteps</h3>
+<blockquote class="blockquote">
+<pre><code> TSShuffleSteps (magnitude=1.0, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Randomly shuffles consecutive sequence datapoints in batch</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.arange(<span class="dv">11</span>).<span class="bu">float</span>())</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tt_ <span class="op">=</span> []</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>): </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    tt <span class="op">=</span> TSShuffleSteps()(t, split_idx<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    test_eq(<span class="bu">len</span>(<span class="bu">set</span>(tt.tolist())), <span class="bu">len</span>(t))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    test_ne(tt, t)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    tt_.extend([t <span class="cf">for</span> i,t <span class="kw">in</span> <span class="bu">enumerate</span>(tt) <span class="cf">if</span> t<span class="op">!=</span>i])</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> np.unique(tt_, return_counts<span class="op">=</span><span class="va">True</span>) <span class="co"># This is to visualize distribution which should be equal for all and half for first and last items</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.bar(x, y)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="010_data.transforms_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L77" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsgaussiannoise" class="level3">
+<h3 class="anchored" data-anchor-id="tsgaussiannoise">TSGaussianNoise</h3>
+<blockquote class="blockquote">
+<pre><code> TSGaussianNoise (magnitude=0.5, additive=True, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies additive or multiplicative gaussian noise</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSGaussianNoise(<span class="fl">.1</span>, additive<span class="op">=</span><span class="va">True</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>test_eq(TSGaussianNoise(<span class="fl">.1</span>, additive<span class="op">=</span><span class="va">False</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L109" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsmagmulnoise" class="level3">
+<h3 class="anchored" data-anchor-id="tsmagmulnoise">TSMagMulNoise</h3>
+<blockquote class="blockquote">
+<pre><code> TSMagMulNoise (magnitude=1, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies multiplicative noise on the y-axis for each step of a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L96" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsmagaddnoise" class="level3">
+<h3 class="anchored" data-anchor-id="tsmagaddnoise">TSMagAddNoise</h3>
+<blockquote class="blockquote">
+<pre><code> TSMagAddNoise (magnitude=1, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies additive noise on the y-axis for each step of a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSMagAddNoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>test_eq(TSMagMulNoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>test_ne(TSMagAddNoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>test_ne(TSMagMulNoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L143" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="random_cum_linear_generator" class="level3">
+<h3 class="anchored" data-anchor-id="random_cum_linear_generator">random_cum_linear_generator</h3>
+<blockquote class="blockquote">
+<pre><code> random_cum_linear_generator (o, magnitude=0.1)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L136" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="random_cum_noise_generator" class="level3">
+<h3 class="anchored" data-anchor-id="random_cum_noise_generator">random_cum_noise_generator</h3>
+<blockquote class="blockquote">
+<pre><code> random_cum_noise_generator (o, magnitude=0.1, noise=None)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L129" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="random_cum_curve_generator" class="level3">
+<h3 class="anchored" data-anchor-id="random_cum_curve_generator">random_cum_curve_generator</h3>
+<blockquote class="blockquote">
+<pre><code> random_cum_curve_generator (o, magnitude=0.1, order=4, noise=None)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L123" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="random_curve_generator" class="level3">
+<h3 class="anchored" data-anchor-id="random_curve_generator">random_curve_generator</h3>
+<blockquote class="blockquote">
+<pre><code> random_curve_generator (o, magnitude=0.1, order=4, noise=None)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L160" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tstimenoise" class="level3">
+<h3 class="anchored" data-anchor-id="tstimenoise">TSTimeNoise</h3>
+<blockquote class="blockquote">
+<pre><code> TSTimeNoise (magnitude=0.1, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies noise to each step in the x-axis of a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch based on smooth random curve</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSTimeNoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSTimeNoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L174" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsmagwarp" class="level3">
+<h3 class="anchored" data-anchor-id="tsmagwarp">TSMagWarp</h3>
+<blockquote class="blockquote">
+<pre><code> TSMagWarp (magnitude=0.02, ord=4, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies warping to the y-axis of a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch based on a smooth random curve</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSMagWarp()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSMagWarp()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L188" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tstimewarp" class="level3">
+<h3 class="anchored" data-anchor-id="tstimewarp">TSTimeWarp</h3>
+<blockquote class="blockquote">
+<pre><code> TSTimeWarp (magnitude=0.1, ord=6, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies time warping to the x-axis of a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch based on a smooth random curve</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSTimeWarp()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSTimeWarp()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L202" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tswindowwarp" class="level3">
+<h3 class="anchored" data-anchor-id="tswindowwarp">TSWindowWarp</h3>
+<blockquote class="blockquote">
+<pre><code> TSWindowWarp (magnitude=0.1, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies window slicing to the x-axis of a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch based on a random linear curve based on https://halshs.archives-ouvertes.fr/halshs-01357973/document</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSWindowWarp()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L231" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsmagscalepervar" class="level3">
+<h3 class="anchored" data-anchor-id="tsmagscalepervar">TSMagScalePerVar</h3>
+<blockquote class="blockquote">
+<pre><code> TSMagScalePerVar (magnitude=0.5, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies per_var scaling to the y-axis of a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch based on a scalar</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L217" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsmagscale" class="level3">
+<h3 class="anchored" data-anchor-id="tsmagscale">TSMagScale</h3>
+<blockquote class="blockquote">
+<pre><code> TSMagScale (magnitude=0.5, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies scaling to the y-axis of a <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> batch based on a scalar</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSMagScale()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>test_eq(TSMagScalePerVar()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>test_ne(TSMagScale()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>test_ne(TSMagScalePerVar()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L250" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomresizedcrop" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomresizedcrop">TSRandomResizedCrop</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomResizedCrop (magnitude=0.1, size=None, scale=None, ex=None,
+                      mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Randomly amplifies a sequence focusing on a random section of the steps</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSRandomResizedCrop(<span class="fl">.5</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSRandomResizedCrop(size<span class="op">=</span><span class="fl">.8</span>, scale<span class="op">=</span>(<span class="fl">.5</span>, <span class="dv">1</span>))(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>test_ne(TSRandomResizedCrop(size<span class="op">=</span><span class="dv">20</span>, scale<span class="op">=</span>(<span class="fl">.5</span>, <span class="dv">1</span>))(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L290" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tswindowslicing" class="level3">
+<h3 class="anchored" data-anchor-id="tswindowslicing">TSWindowSlicing</h3>
+<blockquote class="blockquote">
+<pre><code> TSWindowSlicing (magnitude=0.1, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Randomly extracts an resize a ts slice based on https://halshs.archives-ouvertes.fr/halshs-01357973/document</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSWindowSlicing()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSWindowSlicing()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L306" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomzoomout" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomzoomout">TSRandomZoomOut</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomZoomOut (magnitude=0.1, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Randomly compresses a sequence on the x-axis</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSRandomZoomOut(<span class="fl">.5</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L327" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomtimescale" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomtimescale">TSRandomTimeScale</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomTimeScale (magnitude=0.1, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Randomly amplifies/ compresses a sequence on the x-axis keeping the same length</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSRandomTimeScale(<span class="fl">.5</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L340" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomtimestep" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomtimestep">TSRandomTimeStep</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomTimeStep (magnitude=0.02, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Compresses a sequence on the x-axis by randomly selecting sequence steps and interpolating to previous size</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSRandomTimeStep()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L358" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsresamplesteps" class="level3">
+<h3 class="anchored" data-anchor-id="tsresamplesteps">TSResampleSteps</h3>
+<blockquote class="blockquote">
+<pre><code> TSResampleSteps (step_pct=1.0, same_seq_len=True, magnitude=None,
+                  **kwargs)</code></pre>
+</blockquote>
+<p>Transform that randomly selects and sorts sequence steps (with replacement) maintaining the sequence length</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSResampleSteps(step_pct<span class="op">=</span><span class="fl">.9</span>, same_seq_len<span class="op">=</span><span class="va">False</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape[<span class="op">-</span><span class="dv">1</span>], <span class="bu">round</span>(<span class="fl">.9</span><span class="op">*</span>xb.shape[<span class="op">-</span><span class="dv">1</span>]))</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>test_eq(TSResampleSteps(step_pct<span class="op">=</span><span class="fl">.9</span>, same_seq_len<span class="op">=</span><span class="va">True</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape[<span class="op">-</span><span class="dv">1</span>], xb.shape[<span class="op">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L382" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsblur" class="level3">
+<h3 class="anchored" data-anchor-id="tsblur">TSBlur</h3>
+<blockquote class="blockquote">
+<pre><code> TSBlur (magnitude=1.0, ex=None, filt_len=None, **kwargs)</code></pre>
+</blockquote>
+<p>Blurs a sequence applying a filter of type [1, 0, 1]</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSBlur(filt_len<span class="op">=</span><span class="dv">7</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSBlur()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L401" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tssmooth" class="level3">
+<h3 class="anchored" data-anchor-id="tssmooth">TSSmooth</h3>
+<blockquote class="blockquote">
+<pre><code> TSSmooth (magnitude=1.0, ex=None, filt_len=None, **kwargs)</code></pre>
+</blockquote>
+<p>Smoothens a sequence applying a filter of type [1, 5, 1]</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSSmooth(filt_len<span class="op">=</span><span class="dv">7</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSSmooth()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L425" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsfreqdenoise" class="level3">
+<h3 class="anchored" data-anchor-id="tsfreqdenoise">TSFreqDenoise</h3>
+<blockquote class="blockquote">
+<pre><code> TSFreqDenoise (magnitude=0.1, ex=None, wavelet='db4', level=2, thr=None,
+                thr_mode='hard', pad_mode='per', **kwargs)</code></pre>
+</blockquote>
+<p>Denoises a sequence applying a wavelet decomposition method</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L421" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="maddest" class="level3">
+<h3 class="anchored" data-anchor-id="maddest">maddest</h3>
+<blockquote class="blockquote">
+<pre><code> maddest (d, axis=None)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>: <span class="im">import</span> pywt </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>: <span class="cf">pass</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'pywt'</span> <span class="kw">in</span> <span class="bu">dir</span>():</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    test_eq(TSFreqDenoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    test_ne(TSFreqDenoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L460" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomfreqnoise" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomfreqnoise">TSRandomFreqNoise</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomFreqNoise (magnitude=0.1, ex=None, wavelet='db4', level=2,
+                    mode='constant', **kwargs)</code></pre>
+</blockquote>
+<p>Applys random noise using a wavelet decomposition method</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'pywt'</span> <span class="kw">in</span> <span class="bu">dir</span>():</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    test_eq(TSRandomFreqNoise()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L481" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomresizedlookback" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomresizedlookback">TSRandomResizedLookBack</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomResizedLookBack (magnitude=0.1, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Selects a random number of sequence steps starting from the end and return an output of the same shape</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>): </span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    o <span class="op">=</span> TSRandomResizedLookBack()(xb, split_idx<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    test_eq(o.shape[<span class="op">-</span><span class="dv">1</span>], xb.shape[<span class="op">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L497" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomlookbackout" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomlookbackout">TSRandomLookBackOut</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomLookBackOut (magnitude=0.1, **kwargs)</code></pre>
+</blockquote>
+<p>Selects a random number of sequence steps starting from the end and set them to zero</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>): </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>    o <span class="op">=</span> TSRandomLookBackOut()(xb, split_idx<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    test_eq(o.shape[<span class="op">-</span><span class="dv">1</span>], xb.shape[<span class="op">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L513" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsvarout" class="level3">
+<h3 class="anchored" data-anchor-id="tsvarout">TSVarOut</h3>
+<blockquote class="blockquote">
+<pre><code> TSVarOut (magnitude=0.05, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Set the value of a random number of variables to zero</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSVarOut()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L537" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tscutout" class="level3">
+<h3 class="anchored" data-anchor-id="tscutout">TSCutOut</h3>
+<blockquote class="blockquote">
+<pre><code> TSCutOut (magnitude=0.05, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Sets a random section of the sequence to zero</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSCutOut()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L559" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tstimestepout" class="level3">
+<h3 class="anchored" data-anchor-id="tstimestepout">TSTimeStepOut</h3>
+<blockquote class="blockquote">
+<pre><code> TSTimeStepOut (magnitude=0.05, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Sets random sequence steps to zero</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSTimeStepOut()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L576" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomcroppad" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomcroppad">TSRandomCropPad</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomCropPad (magnitude=0.05, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Crops a section of the sequence of a random length</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSRandomCropPad()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L596" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsmaskout" class="level3">
+<h3 class="anchored" data-anchor-id="tsmaskout">TSMaskOut</h3>
+<blockquote class="blockquote">
+<pre><code> TSMaskOut (magnitude=0.1, compensate:bool=False, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies a random mask</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSMaskOut()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSMaskOut()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L614" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsinputdropout" class="level3">
+<h3 class="anchored" data-anchor-id="tsinputdropout">TSInputDropout</h3>
+<blockquote class="blockquote">
+<pre><code> TSInputDropout (magnitude=0.0, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies input dropout with required_grad=False</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSInputDropout(<span class="fl">.1</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSInputDropout(<span class="fl">.1</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L630" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tstranslatex" class="level3">
+<h3 class="anchored" data-anchor-id="tstranslatex">TSTranslateX</h3>
+<blockquote class="blockquote">
+<pre><code> TSTranslateX (magnitude=0.1, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Moves a selected sequence window a random number of steps</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSTranslateX()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L654" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomshift" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomshift">TSRandomShift</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomShift (magnitude=0.02, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Shifts and splits a sequence</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSRandomShift()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L668" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tshorizontalflip" class="level3">
+<h3 class="anchored" data-anchor-id="tshorizontalflip">TSHorizontalFlip</h3>
+<blockquote class="blockquote">
+<pre><code> TSHorizontalFlip (magnitude=1.0, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Flips the sequence along the x-axis</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSHorizontalFlip()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSHorizontalFlip()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L681" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomtrend" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomtrend">TSRandomTrend</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomTrend (magnitude=0.1, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Randomly rotates the sequence along the z-axis</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSRandomTrend()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L702" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsverticalflip" class="level3">
+<h3 class="anchored" data-anchor-id="tsverticalflip">TSVerticalFlip</h3>
+<blockquote class="blockquote">
+<pre><code> TSVerticalFlip (magnitude=1.0, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Applies a negative value to the time sequence</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSVerticalFlip()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSVerticalFlip()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L713" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsresize" class="level3">
+<h3 class="anchored" data-anchor-id="tsresize">TSResize</h3>
+<blockquote class="blockquote">
+<pre><code> TSResize (magnitude=-0.5, size=None, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Resizes the sequence length of a time series</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> sz <span class="kw">in</span> np.linspace(<span class="fl">.2</span>, <span class="dv">2</span>, <span class="dv">10</span>): test_eq(TSResize(sz)(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape[<span class="op">-</span><span class="dv">1</span>], <span class="bu">int</span>(<span class="bu">round</span>(xb.shape[<span class="op">-</span><span class="dv">1</span>]<span class="op">*</span>(<span class="dv">1</span><span class="op">+</span>sz))))</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSResize(<span class="dv">1</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L727" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomsize" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomsize">TSRandomSize</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomSize (magnitude=0.1, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Randomly resizes the sequence length of a time series</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>seq_len_ <span class="op">=</span> []</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>): </span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>    o <span class="op">=</span> TSRandomSize(<span class="fl">.5</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>    seq_len_.append(o.shape[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>test_lt(<span class="bu">min</span>(seq_len_), xb.shape[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>test_gt(<span class="bu">max</span>(seq_len_), xb.shape[<span class="op">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L740" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomlowres" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomlowres">TSRandomLowRes</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomLowRes (magnitude=0.5, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Randomly resizes the sequence length of a time series to a lower resolution</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L753" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsdownupscale" class="level3">
+<h3 class="anchored" data-anchor-id="tsdownupscale">TSDownUpScale</h3>
+<blockquote class="blockquote">
+<pre><code> TSDownUpScale (magnitude=0.5, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Downscales a time series and upscales it again to previous sequence length</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSDownUpScale()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L768" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomdownupscale" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomdownupscale">TSRandomDownUpScale</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomDownUpScale (magnitude=0.5, ex=None, mode='linear', **kwargs)</code></pre>
+</blockquote>
+<p>Randomly downscales a time series and upscales it again to previous sequence length</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>test_eq(TSRandomDownUpScale()(xb, split_idx<span class="op">=</span><span class="dv">0</span>).shape, xb.shape)</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>test_ne(TSDownUpScale()(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>test_eq(TSDownUpScale()(xb, split_idx<span class="op">=</span><span class="dv">1</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L784" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandomconv" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandomconv">TSRandomConv</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandomConv (magnitude=0.05, ex=None, ks=[1, 3, 5, 7], **kwargs)</code></pre>
+</blockquote>
+<p>Applies a convolution with a random kernel and random weights with required_grad=False</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>): </span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>    o <span class="op">=</span> TSRandomConv(magnitude<span class="op">=</span><span class="fl">0.05</span>, ex<span class="op">=</span><span class="va">None</span>, ks<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>])(xb, split_idx<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>    test_eq(o.shape, xb.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L804" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsrandom2value" class="level3">
+<h3 class="anchored" data-anchor-id="tsrandom2value">TSRandom2Value</h3>
+<blockquote class="blockquote">
+<pre><code> TSRandom2Value (magnitude=0.1, sel_vars=None, sel_steps=None,
+                 static=False, value=nan, **kwargs)</code></pre>
+</blockquote>
+<p>Randomly sets selected variables of type <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> to predefined value (default: np.nan)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">10</span>))</span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="fl">0.5</span>, sel_vars<span class="op">=</span><span class="va">None</span>, sel_steps<span class="op">=</span><span class="va">None</span>, static<span class="op">=</span><span class="va">False</span>, value<span class="op">=</span><span class="dv">0</span>)(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[1., 0., 0., 1., 0., 1., 0., 1., 0., 1.],
+         [0., 0., 1., 0., 1., 1., 0., 0., 0., 0.],
+         [1., 1., 0., 1., 0., 0., 1., 0., 1., 1.]],
+
+        [[0., 1., 1., 0., 0., 1., 1., 1., 1., 0.],
+         [0., 0., 0., 0., 1., 1., 1., 1., 0., 1.],
+         [0., 1., 1., 1., 0., 0., 1., 1., 0., 0.]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">10</span>))</span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="fl">0.5</span>, sel_vars<span class="op">=</span>[<span class="dv">1</span>], sel_steps<span class="op">=</span><span class="bu">slice</span>(<span class="op">-</span><span class="dv">5</span>, <span class="va">None</span>), static<span class="op">=</span><span class="va">False</span>, value<span class="op">=</span><span class="dv">0</span>)(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [1., 1., 1., 1., 1., 1., 1., 0., 0., 0.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]],
+
+        [[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [1., 1., 1., 1., 1., 0., 1., 0., 0., 0.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">10</span>))</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="fl">0.5</span>, sel_vars<span class="op">=</span>[<span class="dv">1</span>], sel_steps<span class="op">=</span><span class="va">None</span>, static<span class="op">=</span><span class="va">True</span>, value<span class="op">=</span><span class="dv">0</span>)(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]],
+
+        [[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">10</span>))</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="dv">1</span>, sel_vars<span class="op">=</span><span class="dv">1</span>, sel_steps<span class="op">=</span><span class="va">None</span>, static<span class="op">=</span><span class="va">False</span>, value<span class="op">=</span><span class="dv">0</span>)(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]],
+
+        [[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">10</span>))</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="dv">1</span>, sel_vars<span class="op">=</span>[<span class="dv">1</span>,<span class="dv">2</span>], sel_steps<span class="op">=</span><span class="va">None</span>, static<span class="op">=</span><span class="va">False</span>, value<span class="op">=</span><span class="dv">0</span>)(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]],
+
+        [[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">10</span>))</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="dv">1</span>, sel_vars<span class="op">=</span><span class="dv">1</span>, sel_steps<span class="op">=</span>[<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>], static<span class="op">=</span><span class="va">False</span>, value<span class="op">=</span><span class="dv">0</span>)(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [1., 0., 1., 0., 1., 0., 1., 1., 1., 1.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]],
+
+        [[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [1., 0., 1., 0., 1., 0., 1., 1., 1., 1.],
+         [1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">10</span>))</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="dv">1</span>, sel_vars<span class="op">=</span>[<span class="dv">1</span>,<span class="dv">2</span>], sel_steps<span class="op">=</span>[<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>], static<span class="op">=</span><span class="va">False</span>, value<span class="op">=</span><span class="dv">0</span>)(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [1., 0., 1., 0., 1., 0., 1., 1., 1., 1.],
+         [1., 0., 1., 0., 1., 0., 1., 1., 1., 1.]],
+
+        [[1., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+         [1., 0., 1., 0., 1., 0., 1., 1., 1., 1.],
+         [1., 0., 1., 0., 1., 0., 1., 1., 1., 1.]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>))</span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="fl">.5</span>, sel_vars<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">2</span>])(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[nan, nan, 1., 1.],
+         [1., 1., 1., 1.],
+         [nan, nan, 1., nan]],
+
+        [[1., nan, 1., nan],
+         [1., 1., 1., 1.],
+         [1., nan, nan, nan]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>))</span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>TSRandom2Value(magnitude<span class="op">=</span><span class="fl">.5</span>, sel_steps<span class="op">=</span><span class="bu">slice</span>(<span class="dv">2</span>, <span class="va">None</span>))(t, split_idx<span class="op">=</span><span class="dv">0</span>).data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[1., 1., 1., nan],
+         [1., 1., 1., 1.],
+         [1., 1., 1., nan]],
+
+        [[1., 1., 1., 1.],
+         [1., 1., 1., 1.],
+         [1., 1., 1., 1.]]])</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">100</span>))</span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a>test_gt(np.isnan(TSRandom2Value(magnitude<span class="op">=</span><span class="fl">.5</span>)(t, split_idx<span class="op">=</span><span class="dv">0</span>)).<span class="bu">sum</span>().item(), <span class="dv">0</span>)</span>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">100</span>))</span>
+<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a>test_gt(np.isnan(TSRandom2Value(magnitude<span class="op">=</span><span class="fl">.5</span>, sel_vars<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">2</span>])(t, split_idx<span class="op">=</span><span class="dv">0</span>)[:, [<span class="dv">0</span>,<span class="dv">2</span>]]).<span class="bu">sum</span>().item(), <span class="dv">0</span>)</span>
+<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">100</span>))</span>
+<span id="cb107-6"><a href="#cb107-6" aria-hidden="true" tabindex="-1"></a>test_eq(np.isnan(TSRandom2Value(magnitude<span class="op">=</span><span class="fl">.5</span>, sel_vars<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">2</span>])(t, split_idx<span class="op">=</span><span class="dv">0</span>)[:, <span class="dv">1</span>]).<span class="bu">sum</span>().item(), <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L854" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="tsmask2value" class="level3">
+<h3 class="anchored" data-anchor-id="tsmask2value">TSMask2Value</h3>
+<blockquote class="blockquote">
+<pre><code> TSMask2Value (mask_fn, value=nan, sel_vars=None, **kwargs)</code></pre>
+</blockquote>
+<p>Randomly sets selected variables of type <a href="https://timeseriesAI.github.io/data.core.html#tstensor"><code>TSTensor</code></a> to predefined value (default: np.nan)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> TSTensor(torch.ones(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">100</span>))</span>
+<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _mask_fn(o, r<span class="op">=</span><span class="fl">.15</span>, value<span class="op">=</span>np.nan):</span>
+<span id="cb109-3"><a href="#cb109-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> torch.rand_like(o) <span class="op">&gt;</span> (<span class="dv">1</span><span class="op">-</span>r)</span>
+<span id="cb109-4"><a href="#cb109-4" aria-hidden="true" tabindex="-1"></a>test_gt(np.isnan(TSMask2Value(_mask_fn)(t, split_idx<span class="op">=</span><span class="dv">0</span>)).<span class="bu">sum</span>().item(), <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L920" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="randaugment" class="level3">
+<h3 class="anchored" data-anchor-id="randaugment">RandAugment</h3>
+<blockquote class="blockquote">
+<pre><code> RandAugment (tfms:list, N:int=1, M:int=3, **kwargs)</code></pre>
+</blockquote>
+<p>A transform that before_call its state at each <code>__call__</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>test_ne(RandAugment(TSMagAddNoise, N<span class="op">=</span><span class="dv">5</span>, M<span class="op">=</span><span class="dv">10</span>)(xb, split_idx<span class="op">=</span><span class="dv">0</span>), xb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L947" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="testtfm" class="level3">
+<h3 class="anchored" data-anchor-id="testtfm">TestTfm</h3>
+<blockquote class="blockquote">
+<pre><code> TestTfm (tfm, magnitude=1.0, ex=None, **kwargs)</code></pre>
+</blockquote>
+<p>Utility class to test the output of selected tfms during training</p>
+<hr>
+<p><a href="https://github.com/timeseriesAI/tsai/blob/main/tsai/data/transforms.py#L961" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_tfm_name" class="level3">
+<h3 class="anchored" data-anchor-id="get_tfm_name">get_tfm_name</h3>
+<blockquote class="blockquote">
+<pre><code> get_tfm_name (tfm)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a>test_eq(get_tfm_name(partial(TSMagScale()))<span class="op">==</span>get_tfm_name((partial(TSMagScale()), <span class="fl">0.1</span>, <span class="fl">.05</span>))<span class="op">==</span>get_tfm_name(TSMagScale())<span class="op">==</span>get_tfm_name((TSMagScale(), <span class="fl">0.1</span>, <span class="fl">.05</span>)), <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>all_TS_randaugs_names <span class="op">=</span> [get_tfm_name(t) <span class="cf">for</span> t <span class="kw">in</span> all_TS_randaugs]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
